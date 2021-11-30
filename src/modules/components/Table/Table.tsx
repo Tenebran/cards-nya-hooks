@@ -92,7 +92,7 @@ export const Table = (props: FormPropsType) => {
             selectPage={props.selectPage}
             handleChangePage={props.handleChangePage}
             currentPageNumber={props.currentPageNumber}
-          />{' '}
+          />
         </>
       ) : (
         <div className="table__empty">This pack is empty. Click add new card to fill this pack</div>

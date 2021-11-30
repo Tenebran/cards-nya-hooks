@@ -25,6 +25,7 @@ import { Redirect } from 'react-router-dom';
 import { PATH } from '../../routes/Routes';
 import { Preloader } from '../../components/Preloader/Preloader';
 import { RequestStatusType } from '../../redux/reducers/appReducer';
+import useCardsPack from '../../hooks/useCardsPack';
 
 const tableTitle = {
   table1: 'Name',
@@ -41,65 +42,73 @@ export const CardsPack = (props: PropsType) => {
   const appStatus = useSelector<AppStoreType, RequestStatusType>(state => state.app.status);
 
   const dispatch = useDispatch();
-  const CardsPack = useSelector<AppStoreType, Array<cardPacksType>>(
-    state => state.cardsPack.cardsPack
-  );
-  const currentPage = useSelector<AppStoreType, number>(
-    state => state.cardsPack.cardPacksTotalCount
-  );
+  // const CardsPack = useSelector<AppStoreType, Array<cardPacksType>>(
+  //   state => state.cardsPack.cardsPack
+  // );
+  // const currentPage = useSelector<AppStoreType, number>(
+  //   state => state.cardsPack.cardPacksTotalCount
+  // );
+
+  const {
+    cardsPack,
+    changePageCount,
+    pageCount,
+    currentPage,
+    changeCardsPage,
+    searchOnPackName,
+    changeToMyCardsPack,
+    deletePackTC,
+  } = useCardsPack();
 
   const isLoggedIn = useSelector<AppStoreType, boolean>(state => state.user.authMe);
   const maxRangeCount = useSelector<AppStoreType, number>(state => state.cardsPack.maxCardsCount);
   const minRangeCount = useSelector<AppStoreType, number>(state => state.cardsPack.minCardsCount);
-  const page = useSelector<AppStoreType, number>(state => state.cardsPack.pageCount);
-  const currentPageNumber = useSelector<AppStoreType, number>(state => state.cardsPack.page);
+  // const page = useSelector<AppStoreType, number>(state => state.cardsPack.pageCount);
+  // const currentPageNumber = useSelector<AppStoreType, number>(state => state.cardsPack.page);
   const myCardsId = useSelector<AppStoreType, string>(state => state.profile._id);
   const userSelect = useSelector<AppStoreType, string>(state => state.cardsPack.userId);
   const [changeButton, setChangeButton] = useState<boolean>(userSelect ? true : false);
 
   useEffect(() => {
-    dispatch(changePageCount(selectPage));
+    // dispatch(changePageCount(selectPage));
     dispatch(packCardsCountSettings(minRangeCount, maxRangeCount));
-    dispatch(cardsPackTC());
+    // dispatch(cardsPackTC());
   }, [dispatch, props.profie, minRangeCount, maxRangeCount, selectPage]);
 
-  const handleChange = useCallback(
-    (event: object, value: number) => {
-      dispatch(cardsPackChangePage(value));
-      dispatch(cardsPackTC());
-    },
-    [dispatch]
-  );
+  const handleChange = useCallback((event: object, value: number) => {
+    changeCardsPage(value);
+  }, []);
 
   const onChangeCallback = (e: ChangeEvent<HTMLInputElement>) => {
     setInputalue(e.currentTarget.value);
   };
 
   const onSearchClick = () => {
-    dispatch(seacrhPacksNameAC(inputValue));
-    dispatch(cardsPackTC());
+    searchOnPackName(inputValue);
+    // dispatch(seacrhPacksNameAC(inputValue));
+    // dispatch(cardsPackTC());
   };
 
-  const handleChangePage = useCallback(
-    (event: SelectChangeEvent) => {
-      setSelectPage(parseInt(event.target.value));
-      dispatch(changePageCount(parseInt(event.target.value)));
-      dispatch(cardsPackTC());
-    },
-    [dispatch]
-  );
+  const handleChangePage = useCallback((event: SelectChangeEvent) => {
+    setSelectPage(parseInt(event.target.value));
+    // dispatch(changePageCount(parseInt(event.target.value)));
+    changePageCount(parseInt(event.target.value));
+    // dispatch(cardsPackTC());
+  }, []);
 
   const changeToUserPack = useCallback(() => {
-    dispatch(changeToMyCardsPackAC(myCardsId));
-    dispatch(cardsPackTC());
+    changeToMyCardsPack(myCardsId);
+    // dispatch(changeToMyCardsPackAC(myCardsId));
+    // dispatch(cardsPackTC());
     setChangeButton(true);
-  }, [dispatch, myCardsId]);
+  }, [myCardsId]);
 
   const changeToAllPack = useCallback(() => {
-    dispatch(changeToMyCardsPackAC(''));
-    dispatch(cardsPackTC());
+    changeToMyCardsPack('');
+    // dispatch(changeToMyCardsPackAC(''));
+    // dispatch(cardsPackTC());
     setChangeButton(false);
-  }, [dispatch]);
+  }, []);
 
   const addNewPackHandler = useCallback(
     (name: string) => {
@@ -108,12 +117,10 @@ export const CardsPack = (props: PropsType) => {
     [dispatch]
   );
 
-  const deletePackHandler = useCallback(
-    (id: string) => {
-      dispatch(deletePackTC(id));
-    },
-    [dispatch]
-  );
+  const deletePackHandler = useCallback((id: string) => {
+    deletePackTC(id);
+    // dispatch(deletePackTC(id));
+  }, []);
 
   const updatePackHAndler = useCallback(
     (id: string, name: string) => {
@@ -166,11 +173,11 @@ export const CardsPack = (props: PropsType) => {
               <Preloader />
             ) : (
               <Table
-                CardsPack={CardsPack}
+                CardsPack={cardsPack.cardsPack}
                 tableTitle={tableTitle}
-                currentPage={currentPage}
-                page={page}
-                currentPageNumber={currentPageNumber}
+                currentPage={cardsPack.cardPacksTotalCount}
+                page={pageCount}
+                currentPageNumber={currentPage}
                 handleChange={handleChange}
                 selectPage={selectPage}
                 handleChangePage={handleChangePage}

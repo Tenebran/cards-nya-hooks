@@ -118,6 +118,7 @@ export const cardsPackTC = (): any => (dispatch: Dispatch, getState: () => AppSt
   const min = appState.minCardsCount;
   const max = appState.maxCardsCount;
   const userId = appState.userId;
+
   dispatch(setInitializedAC(true));
 
   cardsPackApi.getCardsPack(currentPage, pageCount, packName, userId, min, max).then(resp => {
